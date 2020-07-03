@@ -1,2 +1,2 @@
-# bankingPassword
+# banking-password
 Creating an input 
