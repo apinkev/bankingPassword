@@ -24,6 +24,7 @@ const App = () => {
                     <h3>Enter your password:</h3>
                     <form onSubmit={handleSubmit}>
                         <input
+                            minLength={8}
                             maxLength={32}
                             value={password}
                             onChange={handleChange}
