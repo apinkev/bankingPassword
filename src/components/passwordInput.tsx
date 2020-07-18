@@ -41,6 +41,7 @@ const PasswordInput = ({ password }: Props) => {
         const element = (
             <input
                 onChange={handleChange}
+                autoFocus={activeInputs.indexOf(index) === 0}
                 key={index}
                 id={`${index}`}
                 ref={element => (inputRefs.current[index] = element)}
