@@ -1,35 +1,53 @@
-import React from "react";
+import React, { useRef } from "react";
 import "../styles/passwordInput.css";
 
 interface Props {
     password: string;
 }
+const getRandomEnabledInputs = (passwordArray: string[]) => {
+    const values: number[] = [];
+    for (let index = 0; index < 5; index++) {
+        const randomIndex = Math.floor(
+            Math.random() * Math.floor(passwordArray.length)
+        );
+        values.push(randomIndex);
+    }
+
+    const unique = values.filter(
+        (item, index) => values.indexOf(item) === index
+    );
+
+    unique.sort((a, b) => a - b);
+
+    return unique;
+};
 
 const PasswordInput = ({ password }: Props) => {
+    const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
     const passwordArray = password.split("");
     const inputArray: JSX.Element[] = [];
 
-    const getRandomDisabledInputs = () => {
-        const values = [];
-        for (let index = 0; index < 5; index++) {
-            const randomIndex = Math.floor(
-                Math.random() * Math.floor(passwordArray.length)
-            );
-            values.push(randomIndex);
-        }
-        return values;
-    };
+    const activeInputs = getRandomEnabledInputs(passwordArray);
 
-    const values = getRandomDisabledInputs();
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const currentId = parseInt(e.target.id);
+        const index = activeInputs.indexOf(currentId);
+        const newInputIndex = activeInputs[index + 1];
+
+        inputRefs.current[newInputIndex]?.focus();
+    };
 
     for (let index = 0; index < 32; index++) {
         const element = (
             <input
+                onChange={handleChange}
                 key={index}
-                disabled={!values.includes(index)}
+                id={`${index}`}
+                ref={element => (inputRefs.current[index] = element)}
+                disabled={!activeInputs.includes(index)}
                 maxLength={1}
                 className={
-                    values.includes(index)
+                    activeInputs.includes(index)
                         ? "single-character"
                         : "single-character disabled"
                 }
