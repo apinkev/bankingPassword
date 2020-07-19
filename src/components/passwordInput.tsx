@@ -46,6 +46,7 @@ const PasswordInput = ({ password }: Props) => {
                 id={`${index}`}
                 ref={element => (inputRefs.current[index] = element)}
                 disabled={!activeInputs.includes(index)}
+                onFocus={e => e.target.select()}
                 maxLength={1}
                 className={
                     activeInputs.includes(index)
