@@ -1,41 +1,35 @@
 import React, { useState } from "react";
 import PasswordInput from "./components/passwordInput";
 import "./App.css";
+import MainInput from "./components/mainInput";
+import WelcomeScreen from "./components/welcomeScreen";
 
-const App = () => {
+function App() {
     const [password, setPassword] = useState("");
     const [enteredPassword, setEnteredPassword] = useState(false);
+    const [success, setSuccess] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
+    const handleSuccess = () => {
+        setSuccess(true);
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setEnteredPassword(true);
-    };
+    if (success) {
+        return <WelcomeScreen />;
+    }
+
+    if (enteredPassword) {
+        return <PasswordInput password={password} onSuccess={handleSuccess} />;
+    }
 
     return (
         <>
-            {enteredPassword ? (
-                <PasswordInput password={password} />
-            ) : (
-                <div>
-                    <h3>Enter your password:</h3>
-                    <form onSubmit={handleSubmit}>
-                        <input
-                            autoFocus
-                            minLength={8}
-                            maxLength={32}
-                            value={password}
-                            onChange={handleChange}
-                        />
-                        <input type="submit" />
-                    </form>
-                </div>
-            )}
+            <MainInput
+                password={password}
+                setPassword={setPassword}
+                setEnteredPassword={setEnteredPassword}
+            />
         </>
     );
-};
+}
 
 export default App;

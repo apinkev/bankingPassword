@@ -1,28 +1,17 @@
 import React, { useRef } from "react";
 import "../styles/passwordInput.css";
+import { getRandomEnabledInputs } from "./utils";
 
 interface Props {
     password: string;
+    onSuccess: () => void;
 }
-const getRandomEnabledInputs = (passwordArray: string[]) => {
-    const values: number[] = [];
-    for (let index = 0; index < 5; index++) {
-        const randomIndex = Math.floor(
-            Math.random() * Math.floor(passwordArray.length)
-        );
-        values.push(randomIndex);
-    }
 
-    const unique = values.filter(
-        (item, index) => values.indexOf(item) === index
-    );
+interface resultObject {
+    [key: number]: string;
+}
 
-    unique.sort((a, b) => a - b);
-
-    return unique;
-};
-
-const PasswordInput = ({ password }: Props) => {
+const PasswordInput = ({ password, onSuccess }: Props) => {
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
     const passwordArray = password.split("");
     const inputArray: JSX.Element[] = [];
@@ -31,10 +20,33 @@ const PasswordInput = ({ password }: Props) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const currentId = parseInt(e.target.id);
+
         const index = activeInputs.indexOf(currentId);
         const newInputIndex = activeInputs[index + 1];
 
         inputRefs.current[newInputIndex]?.focus();
+    };
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        let submission: resultObject = {};
+        let result: number = 0;
+
+        inputRefs.current.forEach((item, index) => {
+            if (item?.value) {
+                submission[index] = item.value;
+            }
+        });
+
+        passwordArray.forEach((item, index) => {
+            if (submission[index] && submission[index] === item) {
+                result += 1;
+            }
+        });
+
+        if (result === activeInputs.length) {
+            onSuccess();
+        }
     };
 
     for (let index = 0; index < 32; index++) {
@@ -58,7 +70,14 @@ const PasswordInput = ({ password }: Props) => {
         inputArray.push(element);
     }
 
-    return <div className="password-container">{inputArray}</div>;
+    return (
+        <div className="password-container">
+            <form onSubmit={handleSubmit}>
+                {inputArray}
+                <button>Submit</button>
+            </form>
+        </div>
+    );
 };
 
 export default PasswordInput;
