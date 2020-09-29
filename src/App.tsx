@@ -3,32 +3,47 @@ import PasswordInput from "./components/passwordInput";
 import "./App.css";
 import MainInput from "./components/mainInput";
 import WelcomeScreen from "./components/welcomeScreen";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 
 function App() {
     const [password, setPassword] = useState("");
-    const [enteredPassword, setEnteredPassword] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const [entered, setEntered] = useState(false);
 
     const handleSuccess = () => {
-        setSuccess(true);
+        setEntered(true);
     };
-
-    if (success) {
-        return <WelcomeScreen />;
-    }
-
-    if (enteredPassword) {
-        return <PasswordInput password={password} onSuccess={handleSuccess} />;
-    }
-
     return (
-        <>
-            <MainInput
-                password={password}
-                setPassword={setPassword}
-                setEnteredPassword={setEnteredPassword}
-            />
-        </>
+        <BrowserRouter>
+            <Switch>
+                {entered && (
+                    <Redirect from="/password-input" to="/welcome-screen" />
+                )}
+                <Route exact path="/">
+                    <MainInput password={password} setPassword={setPassword} />
+                </Route>
+                <Route path="/password-input">
+                    <PasswordInput
+                        password={password}
+                        onSuccess={handleSuccess}
+                    />
+                </Route>
+
+                <Route
+                    render={() =>
+                        password.length ? (
+                            <WelcomeScreen />
+                        ) : (
+                            <Redirect
+                                to={{
+                                    pathname: "/"
+                                }}
+                            />
+                        )
+                    }
+                    path="/welcome-screen"
+                />
+            </Switch>
+        </BrowserRouter>
     );
 }
 

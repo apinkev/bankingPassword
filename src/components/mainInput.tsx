@@ -1,19 +1,18 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface Props {
     password: string;
     setPassword: React.Dispatch<React.SetStateAction<string>>;
-    setEnteredPassword: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function MainInput({ password, setPassword, setEnteredPassword }: Props) {
+function MainInput({ password, setPassword }: Props) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setEnteredPassword(true);
     };
 
     return (
@@ -27,7 +26,9 @@ function MainInput({ password, setPassword, setEnteredPassword }: Props) {
                     value={password}
                     onChange={handleChange}
                 />
-                <input type="submit" />
+                <Link to="/password-input">
+                    <button type="submit"> Submit</button>
+                </Link>
             </form>
         </div>
     );
